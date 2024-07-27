@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserWeekMealPlanRequest;
 use App\Http\Requests\UpdateUserWeekMealPlanRequest;
 use App\Http\Resources\UserWeekMealPlanCollection;
-use App\Http\Resources\UserWeekMealPlanResource;
 use App\Models\User;
 use App\Models\UserWeekMealPlan;
 use Carbon\Carbon;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 class UserWeekMealPlanController extends Controller

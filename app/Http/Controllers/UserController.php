@@ -15,7 +15,7 @@ class UserController extends Controller
             'password' => 'required|string|confirmed',
         ]);
 
-        User::factory()->create($validated);
+        User::create($validated);
 
         return [
             'message' => 'User created successfully'
