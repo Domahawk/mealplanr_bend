@@ -32,7 +32,7 @@ class MealController extends Controller
             $dbQuery->where($key, 'like', "%$value%");
         }
 
-        return MealCollection::make($dbQuery->paginate(3));
+        return MealCollection::make($dbQuery->paginate(10));
     }
 
     /**
