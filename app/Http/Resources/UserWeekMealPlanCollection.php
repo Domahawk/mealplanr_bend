@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use App\Models\Meal;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -15,6 +17,13 @@ class UserWeekMealPlanCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
+        $today = Carbon::today();
+        $dateRange = CarbonPeriod::create(
+            $today->startOfWeek()->format('Y-m-d'),
+            $today->endOfWeek()->format('Y-m-d')
+        );
+        $dateRangeGroup = [];
+
         $group = $this->collection->mapToGroups(function (UserWeekMealPlanResource $item) {
             return [
                 $item['date'] => [
@@ -25,9 +34,14 @@ class UserWeekMealPlanCollection extends ResourceCollection
                 ]];
         });
 
+        foreach ($dateRange as $date) {
+            $dateKey = $date->format('Y-m-d');
+            $dateRangeGroup[$dateKey] = $group[$dateKey] ?? [];
+        }
+
         $data = [];
 
-        foreach ($group as $key => $dailyPlan) {
+        foreach ($dateRangeGroup as $key => $dailyPlan) {
             $data[] = [
                 'date' => $key,
                 'meals' => collect($dailyPlan)->map(function ($item) {
