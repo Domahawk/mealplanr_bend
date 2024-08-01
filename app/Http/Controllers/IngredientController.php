@@ -30,7 +30,7 @@ class IngredientController extends Controller
         }
 
 
-        return IngredientResource::collection($dbQuery->paginate(3));
+        return IngredientResource::collection($dbQuery->paginate(10));
     }
 
     /**
