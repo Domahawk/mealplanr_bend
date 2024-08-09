@@ -8,7 +8,7 @@ use App\Http\Controllers\UserWeekMealPlanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/users', [UserController::class, 'create']);
+Route::post('/users', [UserController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:api'], function () {
@@ -22,6 +22,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user-meal-plan', [UserWeekMealPlanController::class, 'index']);
     Route::post('/user-meal-plan', [UserWeekMealPlanController::class, 'store']);
-    Route::post('/user-meal-plan/{userWeekMealPlan}', [UserWeekMealPlanController::class, 'update']);
+    Route::put('/user-meal-plan/{userWeekMealPlan}', [UserWeekMealPlanController::class, 'update']);
     Route::delete('/user-meal-plan/{userWeekMealPlan}', [UserWeekMealPlanController::class, 'destroy']);
 });

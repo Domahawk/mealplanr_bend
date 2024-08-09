@@ -2,33 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreIngredientRequest;
-use App\Http\Requests\UpdateIngredientRequest;
+use App\Http\Requests\IngredientRequest;
 use App\Http\Resources\IngredientResource;
 use App\Models\Ingredient;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Validation\Rules\In;
 
 class IngredientController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(IngredientRequest $request): AnonymousResourceCollection
     {
-        $requestQuery = $request->query();
+        $validated = $request->validated();
         $dbQuery = Ingredient::query();
 
-        foreach ($requestQuery as $key => $value) {
-            if ($key === 'page') {
-                continue;
-            }
-
+        foreach ($validated as $key => $value) {
             $dbQuery->where($key, 'like', "%$value%");
         }
-
 
         return IngredientResource::collection($dbQuery->paginate(10));
     }
@@ -36,14 +27,10 @@ class IngredientController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreIngredientRequest $request)
+    public function store(IngredientRequest $request)
     {
-        $valideted = $request->validate([
-            'name' => 'required|string|max:255',
-            'calories' => 'required|numeric',
-        ]);
-
-        $ingredient = Ingredient::create($valideted);
+        $validated = $request->validated();
+        $ingredient = Ingredient::create($validated);
 
         return IngredientResource::make($ingredient);
     }
@@ -59,7 +46,7 @@ class IngredientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateIngredientRequest $request, Ingredient $ingredient)
+    public function update(IngredientRequest $request, Ingredient $ingredient)
     {
         //
     }

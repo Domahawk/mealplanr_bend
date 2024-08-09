@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreMealRequest;
-use App\Http\Requests\UpdateMealRequest;
+use App\Http\Requests\MealRequest;
 use App\Http\Resources\MealCollection;
 use App\Http\Resources\MealResource;
 use App\Models\Meal;
 use App\Services\CreateMealService;
-use Illuminate\Http\Request;
 
 class MealController extends Controller
 {
@@ -18,17 +16,12 @@ class MealController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): MealCollection
+    public function index(MealRequest $request): MealCollection
     {
-        $requestQuery = $request->query();
+        $validated = $request->validated();
         $dbQuery = Meal::query();
 
-
-        foreach ($requestQuery as $key => $value) {
-            if ($key === 'page') {
-                continue;
-            }
-
+        foreach ($validated as $key => $value) {
             $dbQuery->where($key, 'like', "%$value%");
         }
 
@@ -38,14 +31,9 @@ class MealController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMealRequest $request)
+    public function store(MealRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'ingredients' => 'required|array',
-            'ingredients.*.id' => 'required|exists:ingredients,id',
-            'ingredients.*.grams' => 'required|integer',
-        ]);
+        $validated = $request->validated();
 
         return $this->createMealService->createMeals($validated);
     }
@@ -61,7 +49,7 @@ class MealController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMealRequest $request, Meal $meal)
+    public function update(MealRequest $request, Meal $meal)
     {
         //
     }

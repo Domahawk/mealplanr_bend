@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUserWeekMealPlanRequest;
-use App\Http\Requests\UpdateUserWeekMealPlanRequest;
+use App\Http\Requests\UserWeekMealPlanRequest;
 use App\Http\Resources\UserWeekMealPlanCollection;
 use App\Models\User;
 use App\Models\UserWeekMealPlan;
@@ -12,16 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 class UserWeekMealPlanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): UserWeekMealPlanCollection
     {
         /** @var User $user */
         $user = Auth::user();
-        // Carbon->weekday counts from Sunday (0) to Saturday (6)
-        // We get current day (0-6)
-        // To start counting from Monday to Sunday we subtract 1 from weekday
         $today = Carbon::today('GMT+2');
         $startDate = $today->startOfWeek()->format('Y-m-d');
         $endDate = $today->endOfWeek()->format('Y-m-d');
@@ -41,16 +34,9 @@ class UserWeekMealPlanController extends Controller
             )->get());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreUserWeekMealPlanRequest $request)
+    public function store(UserWeekMealPlanRequest $request)
     {
-        $validated = $request->validate([
-            'date' => 'required|date',
-            'meals' => 'required|array',
-            'meals.*' => 'required|exists:meals,id',
-        ]);
+        $validated = $request->validated();
 
         /** @var User $user */
         $user = Auth::user();
@@ -74,24 +60,14 @@ class UserWeekMealPlanController extends Controller
         ];
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(UserWeekMealPlan $userWeekMealPlan)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateUserWeekMealPlanRequest $request, UserWeekMealPlan $userWeekMealPlan)
+    public function update(UserWeekMealPlanRequest $request, UserWeekMealPlan $userWeekMealPlan)
     {
-        $validated = $request->validate([
-            'consumed' => 'boolean',
-            'meal_id' => 'exists:meals,id',
-            'user_id' => 'prohibited',
-        ]);
+        $validated = $request->validated();
 
         foreach ($validated as $key => $value) {
             $userWeekMealPlan->{$key} = $value;
@@ -104,9 +80,6 @@ class UserWeekMealPlanController extends Controller
         ];
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(UserWeekMealPlan $userWeekMealPlan)
     {
         $userWeekMealPlan->delete();

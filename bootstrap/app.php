@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\InvalidInputException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,5 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (InvalidInputException $exception) {
+            return response()->json(['message' => $exception->getMessage()], $exception->getCode());
+        });
     })->create();
